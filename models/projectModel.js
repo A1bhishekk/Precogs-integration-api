@@ -6,11 +6,15 @@ const projectSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        description: {
+        full_name: {
             type: String,
         },
         githubLink: {
             type: String,
+        },
+        id:{
+            type: String,
+            required: true,
         },
        
         owner: {
