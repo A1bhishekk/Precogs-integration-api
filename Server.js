@@ -187,7 +187,9 @@ app.get('/access/githubrepo', async (req, res) => {
         });
 
         const pageRepositories = response.data;
-        const projects=await Project.find();
+        // const projects=await Project.find();
+        // project of auth user
+        const projects = await Project.find({ owner: "6593c7cb95a0c6626594f131" });
 
         // Add the 'access' property to each repository with the value 'false'
         const repositoriesWithAccess = pageRepositories.map(repo => (
@@ -264,6 +266,7 @@ app.get('/userprojects/:userId', async (req, res) => {
     res.json({
       success: true,
       message: "User projects retrieved successfully",
+      Total: user.projects.length,
       userProjects: user.projects,
     });
   } catch (error) {
