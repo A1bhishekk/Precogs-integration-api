@@ -101,72 +101,75 @@ app.get('/dashboard', (req, res) => {
   res.send('Hello World');
 });
 
-
-// app.get('/githubrepo', async (req, res) => {
-//   try {
-//     // if (!req.isAuthenticated()) {
-//     //   return res.redirect('/auth/github');
-//     // }
-
-//     // const user = await User.findOne({ githubId: req.user.githubId });
-//     // console.log(user)
-
-//     // if (!user) {
-//     //   return res.status(404).json({ error: "User not found" });
-//     // }
-
-//     // const githubAccessToken = user.accessToken;
-//     const githubAccessToken = "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";
-
-//     // Function to fetch all pages of repositories recursively
-//     async function fetchRepositories(url, repositories = []) {
-//       try {
-//         const response = await axios.get(url, {
-//           headers: {
-//             Authorization: `token ${githubAccessToken}`,
-//           },
-//           params: {
-//             visibility: 'all',
-//             per_page: 50,
-//           },
-//         });
-
-//         const pageRepositories = response.data;
-//         repositories = repositories.concat(pageRepositories);
-
-//         // Check if there are more pages
-//         const nextPageLink = response.headers.link;
-//         if (nextPageLink && nextPageLink.includes('rel="next"')) {
-//           const nextPageUrl = nextPageLink
-//             .split(', ')
-//             .find(link => link.includes('rel="next"'))
-//             .split(';')[0]
-//             .slice(1, -1);
-//           return fetchRepositories(nextPageUrl, repositories);
-//         }
-
-//         return repositories;
-//       } catch (error) {
-//         throw error;
-//       }
-//     }
-
-//     const repositories = await fetchRepositories('https://api.github.com/user/repos');
-
-//     res.json({
-//       // user: user,
-//       success: true,
-//       message: "Repositories fetched successfully",
-//       Total_Repositories: repositories.length,
-//       repositories: repositories,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
+// github repo without access
 
 app.get('/githubrepo', async (req, res) => {
+  try {
+    // if (!req.isAuthenticated()) {
+    //   return res.redirect('/auth/github');
+    // }
+
+    // const user = await User.findOne({ githubId: req.user.githubId });
+    // console.log(user)
+
+    // if (!user) {
+    //   return res.status(404).json({ error: "User not found" });
+    // }
+
+    // const githubAccessToken = user.accessToken;
+    const githubAccessToken = "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";
+
+    // Function to fetch all pages of repositories recursively
+    async function fetchRepositories(url, repositories = []) {
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `token ${githubAccessToken}`,
+          },
+          params: {
+            visibility: 'all',
+            per_page: 50,
+          },
+        });
+
+        const pageRepositories = response.data;
+        repositories = repositories.concat(pageRepositories);
+
+        // Check if there are more pages
+        const nextPageLink = response.headers.link;
+        if (nextPageLink && nextPageLink.includes('rel="next"')) {
+          const nextPageUrl = nextPageLink
+            .split(', ')
+            .find(link => link.includes('rel="next"'))
+            .split(';')[0]
+            .slice(1, -1);
+          return fetchRepositories(nextPageUrl, repositories);
+        }
+
+        return repositories;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    const repositories = await fetchRepositories('https://api.github.com/user/repos');
+
+    res.json({
+      // user: user,
+      success: true,
+      message: "Repositories fetched successfully",
+      Total_Repositories: repositories.length,
+      repositories: repositories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// github repo with access
+app.get('/access/githubrepo', async (req, res) => {
   try {
     const githubAccessToken = "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";
 
