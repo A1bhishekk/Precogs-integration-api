@@ -9,6 +9,7 @@ const axios = require('axios')
 const session = require('express-session');
 const User = require('./models/userModel');
 const Project = require('./models/projectModel');
+const GoogleUser = require('./models/googleModel');
 
 // Initialize Express
 const app = express();
@@ -107,6 +108,7 @@ app.get('/dashboard', (req, res) => {
 app.get('/access/githubrepo', async (req, res) => {
   try {
     const githubAccessToken = "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";
+    // const githubAccessToken = "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";
 
     // Function to fetch all pages of repositories recursively
     async function fetchRepositories(url, repositories = []) {
@@ -353,6 +355,62 @@ app.get('/searchprojects', async (req, res) => {
   }
 });
 
+
+
+// signin with google
+
+app.post('/auth/google',async (req,res)=>{
+  const {name,email,photo,role,_id}=req.body;
+
+  if(!name || !email || !photo || !role || !_id){
+    return res.status(400).json({error:"All fields are required"})
+  }
+
+  let user=await GoogleUser.findById(_id);
+
+  if(user){
+    return res.status(200).json({
+      success:true,
+      message:`Welcome back ${user.name}`,
+    })
+  }
+
+  const newUser=new GoogleUser({
+    _id,
+    name,
+    email,
+    photo,
+    role,
+  });
+
+  await newUser.save();
+
+  res.status(200).json({
+    success:true,
+    message:`Welcome ${newUser.name}`,
+  })
+});
+
+// get user by id
+app.get('/getuser/:userId',async (req,res)=>{
+  try{
+    const userId=req.params.userId;
+    const user=await GoogleUser.findById(userId);
+
+    if(!user){
+      return res.status(404).json({error:"User not found"})
+    }
+
+    res.json({
+      success:true,
+      message:"User retrieved successfully",
+      user:user,
+    })
+  }catch(error){
+    console.error(error);
+    res.status(500).json({error:"Internal server error"})
+  }
+});
 
 // Start the server
 app.listen(port, () => {

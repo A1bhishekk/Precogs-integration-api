@@ -16,6 +16,9 @@ const projectSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        language: {
+            type: String,
+        },
        
         owner: {
             type: mongoose.Schema.Types.ObjectId,
