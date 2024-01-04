@@ -266,6 +266,30 @@ app.get('/getprojects', async (req, res) => {
 });
 
 
+// get project by id
+app.get('/getproject/:projectId', async (req, res) => {
+
+  try {
+    const projectId = req.params.projectId;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    res.json({
+      success: true,
+      message: "Project retrieved successfully",
+      project: project,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
 // Delete a project and remove it from user projects
 app.delete('/deleteproject/:projectId', async (req, res) => {
   try {
@@ -296,7 +320,7 @@ app.delete('/deleteproject/:projectId', async (req, res) => {
       success: true,
       message: "Project deleted successfully and removed from user's projects",
       deletedProject: deletedProject,
-      user: updatedUser,
+      // user: updatedUser,
     });
   } catch (error) {
     console.error(error);
