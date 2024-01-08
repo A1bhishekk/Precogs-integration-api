@@ -23,7 +23,18 @@ const projectSchema = new mongoose.Schema(
         language: {
             type: String,
         },
-       
+        businessPriority: {
+            type: String,
+        },
+        projectScope: {
+            type: String,
+        },
+        environment: {
+            type: String,
+        },
+        projectType: {
+            type: String,
+        },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

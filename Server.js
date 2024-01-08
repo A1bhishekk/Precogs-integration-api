@@ -291,6 +291,34 @@ app.get('/getproject/:projectId', async (req, res) => {
   }
 });
 
+//update project by id
+
+app.put('/updateproject/:projectId', async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const projectData = req.body;
+
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      projectData,
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    res.json({
+      success: true,
+      message: "Project updated successfully",
+      project: updatedProject,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 
 // Delete a project and remove it from user projects
