@@ -273,7 +273,8 @@ app.get('/getproject/:projectId', async (req, res) => {
     const projectId = req.params.projectId;
     console.log(projectId)
     // const project = await Project.findById(projectId);
-    const project = await Project.findOne({ id: projectId }).populate('owner');
+    const project = await Project.findOne({ id: projectId })
+    // .populate('owner');
 
     if (!project) {
       return res.status(404).json({ error: 'Project not found' });
