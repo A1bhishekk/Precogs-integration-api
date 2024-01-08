@@ -12,9 +12,13 @@ const projectSchema = new mongoose.Schema(
         githubLink: {
             type: String,
         },
+        html_url: {
+            type: String,
+        },
         id:{
             type: String,
             required: true,
+            unique: true,
         },
         language: {
             type: String,
