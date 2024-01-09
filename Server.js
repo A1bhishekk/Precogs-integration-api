@@ -310,6 +310,7 @@ app.get('/getoverview/:projectId', async (req, res) => {
       success: true,
       message: "Project retrieved successfully",
       overview: {
+        _id: project._id,
         name: project.name,
         full_name: project.full_name,
         githubLink: project.githubLink,
