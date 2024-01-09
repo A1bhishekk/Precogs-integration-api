@@ -291,6 +291,48 @@ app.get('/getproject/:projectId', async (req, res) => {
   }
 });
 
+//get overview of project
+
+app.get('/getoverview/:projectId', async (req, res) => {
+  
+  try {
+    const projectId = req.params.projectId;
+    // console.log(projectId)
+    const project = await Project.findById(projectId);
+    // const project = await Project.findOne({ id: projectId })
+    // .populate('owner');
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    res.json({
+      success: true,
+      message: "Project retrieved successfully",
+      overview: {
+        name: project.name,
+        full_name: project.full_name,
+        githubLink: project.githubLink,
+        html_url: project.html_url,
+        id: project.id,
+        language: project.language,
+        project_info:{
+          businessPriority: project.businessPriority,
+          projectScope: project.projectScope,
+          environment: project.environment,
+          projectType: project.projectType,
+        }
+       
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
 //update project by id
 
 app.put('/updateproject/:projectId', async (req, res) => {
