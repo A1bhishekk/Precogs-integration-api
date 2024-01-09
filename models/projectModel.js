@@ -15,7 +15,7 @@ const projectSchema = new mongoose.Schema(
         html_url: {
             type: String,
         },
-        id:{
+        id: {
             type: String,
             required: true,
             unique: true,
@@ -24,17 +24,24 @@ const projectSchema = new mongoose.Schema(
             type: String,
         },
         businessPriority: {
-            type: String,
+            type: Map,
+            of: String,
         },
+
         projectScope: {
-            type: String,
+            type: Map,
+            of: String,
         },
         environment: {
-            type: String,
+            type: Map,
+            of: String,
+
         },
         projectType: {
-            type: String,
+            type: Map,
+            of: String,
         },
+
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -48,3 +55,4 @@ const projectSchema = new mongoose.Schema(
 const Project = mongoose.model("Project", projectSchema);
 
 module.exports = Project;
+
