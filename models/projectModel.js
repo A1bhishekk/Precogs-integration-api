@@ -1,5 +1,17 @@
 
 const mongoose = require("mongoose");
+
+const projectInfoSchema = new mongoose.Schema({
+    value: {
+        type: String,
+        required: true,
+    },
+    label: {
+        type: String,
+    },
+
+});
+
 const projectSchema = new mongoose.Schema(
     {
         name: {
@@ -23,24 +35,10 @@ const projectSchema = new mongoose.Schema(
         language: {
             type: String,
         },
-        businessPriority: {
-            type: Map,
-            of: String,
-        },
-
-        projectScope: {
-            type: Map,
-            of: String,
-        },
-        environment: {
-            type: Map,
-            of: String,
-
-        },
-        projectType: {
-            type: Map,
-            of: String,
-        },
+        businessPriority: [projectInfoSchema],
+        projectScope: [projectInfoSchema],
+        environment:[projectInfoSchema],
+        projectType: [projectInfoSchema],
 
         owner: {
             type: mongoose.Schema.Types.ObjectId,

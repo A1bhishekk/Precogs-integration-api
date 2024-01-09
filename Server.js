@@ -321,9 +321,9 @@ app.get('/getoverview/:projectId', async (req, res) => {
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
         project_info:{
-          businessPriority: project.businessPriority,
-          projectScope: project.projectScope,
           environment: project.environment,
+          projectScope: project.projectScope,
+          businessPriority: project.businessPriority,
           projectType: project.projectType,
         },
        
