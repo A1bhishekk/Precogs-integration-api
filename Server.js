@@ -316,12 +316,15 @@ app.get('/getoverview/:projectId', async (req, res) => {
         html_url: project.html_url,
         id: project.id,
         language: project.language,
+        owner: project.owner,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
         project_info:{
           businessPriority: project.businessPriority,
           projectScope: project.projectScope,
           environment: project.environment,
           projectType: project.projectType,
-        }
+        },
        
       }
     });
