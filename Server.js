@@ -367,6 +367,83 @@ app.put('/updateproject/:projectId', async (req, res) => {
 
 
 
+app.put('/update/:projectId', async(req, res) => {
+  const projectId = req.params.projectId;
+
+  const { key, value } = req.body;
+  console.log(req.body)
+
+  if (key && (key === 'internal' || key === 'external')) {
+    overview.projectScope[key] = value;
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      overview,
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    res.status(200).json({ 
+      message: `Updated ${key} to ${value}` ,
+      overview: updatedProject,
+      success: true,
+    });
+
+  } else if (key && (key === 'frontend' || key === 'backend')) {
+    overview.projectType[key] = value;
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      overview,
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    res.status(200).json({
+      message: `Updated ${key} to ${value}`,
+      overview: updatedProject,
+      success: true,
+    });
+  } else if (key && (key === 'critical' || key === 'high' || key === 'medium' || key === 'low')) {
+    overview.businessPriority[key] = value;
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      overview,
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    res.status(200).json({
+      message: `Updated ${key} to ${value}`,
+      overview: updatedProject,
+      success: true,
+    });
+  } else if (key && (key === 'production' || key === 'development' || key === 'testing' || key === 'sandbox')) {
+    overview.environment[key] = value;
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      overview,
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    res.status(200).json({
+      message: `Updated ${key} to ${value}`,
+      overview: updatedProject,
+      success: true,
+    });
+  } else {
+    res.status(400).json({ error: 'Invalid key or value' });
+  }
+});
+
+
 // Delete a project and remove it from user projects
 app.delete('/deleteproject/:projectId', async (req, res) => {
   try {

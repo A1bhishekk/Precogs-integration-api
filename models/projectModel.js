@@ -35,10 +35,26 @@ const projectSchema = new mongoose.Schema(
         language: {
             type: String,
         },
-        businessPriority: [projectInfoSchema],
-        projectScope: [projectInfoSchema],
-        environment:[projectInfoSchema],
-        projectType: [projectInfoSchema],
+        // businessPriority: [projectInfoSchema],
+        // projectScope: [projectInfoSchema],
+        // environment:[projectInfoSchema],
+        // projectType: [projectInfoSchema],
+        businessPriority: {
+            type: Map,
+            of: String,
+        },
+        projectScope: {
+            type: Map,
+            of: String,
+        },
+        environment: {
+            type: Map,
+            of: String,
+        },
+        projectType: {
+            type: Map,
+            of: String,
+        },
 
         owner: {
             type: mongoose.Schema.Types.ObjectId,
