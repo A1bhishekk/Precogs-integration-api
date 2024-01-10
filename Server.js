@@ -294,7 +294,7 @@ app.get('/getproject/:projectId', async (req, res) => {
 //get overview of project
 
 app.get('/getoverview/:projectId', async (req, res) => {
-  
+
   try {
     const projectId = req.params.projectId;
     // console.log(projectId)
@@ -320,13 +320,13 @@ app.get('/getoverview/:projectId', async (req, res) => {
         owner: project.owner,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
-        project_info:{
+        project_info: {
           environment: project.environment,
           projectScope: project.projectScope,
           businessPriority: project.businessPriority,
           projectType: project.projectType,
         },
-       
+
       }
     });
   } catch (error) {
@@ -367,81 +367,57 @@ app.put('/updateproject/:projectId', async (req, res) => {
 
 
 
-app.put('/update/:projectId', async(req, res) => {
+app.put('/update/:projectId', async (req, res) => {
   const projectId = req.params.projectId;
+  const projectData = req.body;
+  console.log(projectData)
+  const updatedProject = await Project.findByIdAndUpdate(
+    projectId,
+    projectData,
+    { new: true }
+  );
 
-  const { key, value } = req.body;
-  console.log(req.body)
-
-  if (key && (key === 'internal' || key === 'external')) {
-    overview.projectScope[key] = value;
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      overview,
-      { new: true }
-    );
-
-    if (!updatedProject) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    res.status(200).json({ 
-      message: `Updated ${key} to ${value}` ,
-      overview: updatedProject,
-      success: true,
-    });
-
-  } else if (key && (key === 'frontend' || key === 'backend')) {
-    overview.projectType[key] = value;
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      overview,
-      { new: true }
-    );
-
-    if (!updatedProject) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    res.status(200).json({
-      message: `Updated ${key} to ${value}`,
-      overview: updatedProject,
-      success: true,
-    });
-  } else if (key && (key === 'critical' || key === 'high' || key === 'medium' || key === 'low')) {
-    overview.businessPriority[key] = value;
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      overview,
-      { new: true }
-    );
-
-    if (!updatedProject) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    res.status(200).json({
-      message: `Updated ${key} to ${value}`,
-      overview: updatedProject,
-      success: true,
-    });
-  } else if (key && (key === 'production' || key === 'development' || key === 'testing' || key === 'sandbox')) {
-    overview.environment[key] = value;
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      overview,
-      { new: true }
-    );
-
-    if (!updatedProject) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    res.status(200).json({
-      message: `Updated ${key} to ${value}`,
-      overview: updatedProject,
-      success: true,
-    });
-  } else {
-    res.status(400).json({ error: 'Invalid key or value' });
+  if (!updatedProject) {
+    return res.status(404).json({ error: 'Project not found' });
   }
+  res.status(200).json({
+    success: true,
+    message: "Project updated successfully",
+    project: updatedProject,
+  });
+
+
 });
+
+// app.put('/update/:projectId', async (req, res) => {
+//   const projectId = req.params.projectId;
+
+//   try {
+//     const project = await Project.findById(projectId);
+
+//     if (!project) {
+//       return res.status(404).json({ error: 'Project not found' });
+//     }
+
+//     const { key, value } = req.body;
+
+//     if (key && Object.keys(project.overview).includes(key)) {
+//       project.overview[key] = value;
+//       const updatedProject = await project.save();
+
+//       res.status(200).json({
+//         message: `Updated ${key} to ${value}`,
+//         overview: updatedProject.overview,
+//         success: true,
+//       });
+//     } else {
+//       res.status(400).json({ error: 'Invalid key or value' });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 
 // Delete a project and remove it from user projects
@@ -537,23 +513,23 @@ app.get('/searchprojects', async (req, res) => {
 
 // signin with google
 
-app.post('/auth/google',async (req,res)=>{
-  const {name,email,photo,role,_id}=req.body;
+app.post('/auth/google', async (req, res) => {
+  const { name, email, photo, role, _id } = req.body;
 
-  if(!name || !email || !photo || !role || !_id){
-    return res.status(400).json({error:"All fields are required"})
+  if (!name || !email || !photo || !role || !_id) {
+    return res.status(400).json({ error: "All fields are required" })
   }
 
-  let user=await GoogleUser.findById(_id);
+  let user = await GoogleUser.findById(_id);
 
-  if(user){
+  if (user) {
     return res.status(200).json({
-      success:true,
-      message:`Welcome back ${user.name}`,
+      success: true,
+      message: `Welcome back ${user.name}`,
     })
   }
 
-  const newUser=new GoogleUser({
+  const newUser = new GoogleUser({
     _id,
     name,
     email,
@@ -564,29 +540,29 @@ app.post('/auth/google',async (req,res)=>{
   await newUser.save();
 
   res.status(200).json({
-    success:true,
-    message:`Welcome ${newUser.name}`,
+    success: true,
+    message: `Welcome ${newUser.name}`,
   })
 });
 
 // get user by id
-app.get('/getuser/:userId',async (req,res)=>{
-  try{
-    const userId=req.params.userId;
-    const user=await GoogleUser.findById(userId);
+app.get('/getuser/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await GoogleUser.findById(userId);
 
-    if(!user){
-      return res.status(404).json({error:"User not found"})
+    if (!user) {
+      return res.status(404).json({ error: "User not found" })
     }
 
     res.json({
-      success:true,
-      message:"User retrieved successfully",
-      user:user,
+      success: true,
+      message: "User retrieved successfully",
+      user: user,
     })
-  }catch(error){
+  } catch (error) {
     console.error(error);
-    res.status(500).json({error:"Internal server error"})
+    res.status(500).json({ error: "Internal server error" })
   }
 });
 

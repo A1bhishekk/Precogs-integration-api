@@ -1,0 +1,22 @@
+{
+    "projectScope": {
+        "internal": false,
+        "external": false
+    },
+    "projectType": {
+        "frontend": false,
+        "backend": false
+    },
+    "businessPriority": {
+        "critical": false,
+        "high": false,
+        "medium": false,
+        "low": false
+    },
+    "environment": {
+        "production": false,
+        "development": false,
+        "testing": false,
+        "sandbox": false
+    }
+}

@@ -39,21 +39,62 @@ const projectSchema = new mongoose.Schema(
         // projectScope: [projectInfoSchema],
         // environment:[projectInfoSchema],
         // projectType: [projectInfoSchema],
-        businessPriority: {
-            type: Map,
-            of: String,
-        },
         projectScope: {
-            type: Map,
-            of: String,
-        },
-        environment: {
-            type: Map,
-            of: String,
+            internal: {
+                type: Boolean,
+                default: false,
+            },
+            external: {
+                type: Boolean,
+                default: false,
+            },
         },
         projectType: {
-            type: Map,
-            of: String,
+            frontend: {
+                type: Boolean,
+                default: false,
+            },
+            backend: {
+                type: Boolean,
+                default: false,
+                
+            },
+        },
+        businessPriority: {
+            critical: {
+                type: Boolean,
+                default: false,
+            },
+            high: {
+                type: Boolean,
+                default: false,
+            },
+            medium:{
+                type: Boolean,
+                default: false,
+            },
+            low: {
+                type: Boolean,
+                default: false,
+            }
+        },
+        environment: {
+            production: {
+                type: Boolean,
+                default: false,
+            },
+            development:{
+                type: Boolean,
+                default: false,
+            },
+            testing: {
+                type: Boolean,
+                default: false,
+            },
+            sandbox: {
+                type: Boolean,
+                default: false,
+            }
         },
 
         owner: {
