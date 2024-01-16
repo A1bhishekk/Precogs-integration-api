@@ -462,7 +462,7 @@ app.delete('/deleteproject/:projectId', async (req, res) => {
 
 //get user all project status
 
-app.get('/getprojectstatus', async (req, res) => {
+app.get('/get-dashboard-activity', async (req, res) => {
   const userId = "6593c7cb95a0c6626594f131";
   try {
     const statusCounts = await Project.aggregate([
@@ -479,21 +479,35 @@ app.get('/getprojectstatus', async (req, res) => {
       },
     ]);
 
+    
     const result = {
       open: 0,
       fixed: 0,
       ignored: 0,
     };
-
+    
     statusCounts.forEach((statusCount) => {
       result[statusCount._id] = statusCount.count;
     });
+    
+    const total_issues = result.open + result.fixed + result.ignored;
+    const total_projects = await Project.countDocuments({ owner: userId });
+    //TODO: change total_scans to actual number of scans
+    const total_scans=5;
+
+
 
     res.json({
       success: true,
-      message: "Project status fetched successfully",
-      statusCounts: result,
-      total_issues: result.open + result.fixed + result.ignored,
+      message: "Dashboard Activity fetched successfully",
+      dashboard_activity:{
+        total_scans: total_scans,
+        total_projects: total_projects,
+        total_issues: total_issues,
+        open_issues: result.open,
+        fixed_issues: result.fixed,
+        ignored_issues: result.ignored,
+      },
     });
   } catch (error) {
     throw error;
