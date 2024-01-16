@@ -494,20 +494,24 @@ app.get('/get-dashboard-activity', async (req, res) => {
     const total_projects = await Project.countDocuments({ owner: userId });
     //TODO: change total_scans to actual number of scans
     const total_scans=5;
-
-
-
+    
+    //TODO: change LOC to actual number of lines of code
+    const LineofCode = 4356;
     res.json({
       success: true,
       message: "Dashboard Activity fetched successfully",
-      dashboard_activity:{
-        total_scans: total_scans,
-        total_projects: total_projects,
-        total_issues: total_issues,
-        open_issues: result.open,
-        fixed_issues: result.fixed,
-        ignored_issues: result.ignored,
-      },
+      dashboard_activity:[
+
+        {total_issues:total_issues},
+        {total_projects:total_projects},
+        {total_scans:total_scans},
+        {open_issues:result.open},
+        {fixed_issues:result.fixed},
+        {ignored_issues:result.ignored},
+        {LineOfCode:LineofCode},
+      ]
+   
+      
     });
   } catch (error) {
     throw error;
