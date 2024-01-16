@@ -497,24 +497,22 @@ app.get('/get-dashboard-activity', async (req, res) => {
     
     //TODO: change LOC to actual number of lines of code
     const LineofCode = 4356;
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Dashboard Activity fetched successfully",
       dashboard_activity:[
-
-        {total_issues:total_issues},
-        {total_projects:total_projects},
-        {total_scans:total_scans},
-        {open_issues:result.open},
-        {fixed_issues:result.fixed},
-        {ignored_issues:result.ignored},
+        {TotalIssues:total_issues},
+        {Projects:total_projects},
+        {TotalScans:total_scans},
+        {OpenIssues:result.open},
+        {FixedIssues:result.fixed},
+        {IgnoredIssues:result.ignored},
         {LineOfCode:LineofCode},
       ]
-   
-      
     });
   } catch (error) {
-    throw error;
+    // console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 
 });
