@@ -464,10 +464,6 @@ app.delete('/deleteproject/:projectId', async (req, res) => {
 
 app.get('/getprojectstatus', async (req, res) => {
   const userId = "6593c7cb95a0c6626594f131";
-  // const projects = await Project.find({ owner: userId });
-  // const totalProjects = projects.length;
-  // console.log(totalProjects)
-  // res.send('Hello World');
   try {
     const statusCounts = await Project.aggregate([
       {
@@ -488,15 +484,11 @@ app.get('/getprojectstatus', async (req, res) => {
       fixed: 0,
       ignored: 0,
     };
-    console.log(statusCounts)
 
     statusCounts.forEach((statusCount) => {
       result[statusCount._id] = statusCount.count;
     });
 
-    
-
-    // return result;
     res.json({
       success: true,
       message: "Project status fetched successfully",
@@ -542,111 +534,111 @@ app.post('/scan-code', (req, res) => {
 
 
 
-// search project 
+// // search project 
 
-const GITHUB_API_BASE_URL = 'https://api.github.com';
+// const GITHUB_API_BASE_URL = 'https://api.github.com';
 
-app.get('/searchprojects', async (req, res) => {
+// app.get('/searchprojects', async (req, res) => {
 
-  try {
-    const accessToken = "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";
-    const { query } = req.query;
+//   try {
+//     const accessToken = "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";
+//     const { query } = req.query;
 
-    if (!query) {
-      return res.status(400).json({ error: 'Missing query parameter' });
-    }
+//     if (!query) {
+//       return res.status(400).json({ error: 'Missing query parameter' });
+//     }
 
-    if (!accessToken) {
-      return res.status(401).json({ error: 'Access token is required' });
-    }
+//     if (!accessToken) {
+//       return res.status(401).json({ error: 'Access token is required' });
+//     }
 
-    const headers = {
-      Authorization: `token ${accessToken}`,
-    };
+//     const headers = {
+//       Authorization: `token ${accessToken}`,
+//     };
 
-    const searchResponse = await axios.get(`${GITHUB_API_BASE_URL}/search/repositories`, {
-      params: {
-        q: query,
-        per_page: 10, // Adjust the number of results per page as needed
-      },
-      headers,
-    });
+//     const searchResponse = await axios.get(`${GITHUB_API_BASE_URL}/search/repositories`, {
+//       params: {
+//         q: query,
+//         per_page: 10, // Adjust the number of results per page as needed
+//       },
+//       headers,
+//     });
 
-    const projects = searchResponse.data.items.map((item) => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      url: item.html_url,
-      owner: item.owner.login,
-    }));
+//     const projects = searchResponse.data.items.map((item) => ({
+//       id: item.id,
+//       name: item.name,
+//       description: item.description,
+//       url: item.html_url,
+//       owner: item.owner.login,
+//     }));
 
-    res.json({
-      success: true,
-      message: 'Projects retrieved successfully',
-      projects: projects,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(error.response?.status || 500).json({ error: 'Internal server error' });
-  }
-});
+//     res.json({
+//       success: true,
+//       message: 'Projects retrieved successfully',
+//       projects: projects,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(error.response?.status || 500).json({ error: 'Internal server error' });
+//   }
+// });
 
 
 
-// signin with google
+// // signin with google
 
-app.post('/auth/google', async (req, res) => {
-  const { name, email, photo, role, _id } = req.body;
+// app.post('/auth/google', async (req, res) => {
+//   const { name, email, photo, role, _id } = req.body;
 
-  if (!name || !email || !photo || !role || !_id) {
-    return res.status(400).json({ error: "All fields are required" })
-  }
+//   if (!name || !email || !photo || !role || !_id) {
+//     return res.status(400).json({ error: "All fields are required" })
+//   }
 
-  let user = await GoogleUser.findById(_id);
+//   let user = await GoogleUser.findById(_id);
 
-  if (user) {
-    return res.status(200).json({
-      success: true,
-      message: `Welcome back ${user.name}`,
-    })
-  }
+//   if (user) {
+//     return res.status(200).json({
+//       success: true,
+//       message: `Welcome back ${user.name}`,
+//     })
+//   }
 
-  const newUser = new GoogleUser({
-    _id,
-    name,
-    email,
-    photo,
-    role,
-  });
+//   const newUser = new GoogleUser({
+//     _id,
+//     name,
+//     email,
+//     photo,
+//     role,
+//   });
 
-  await newUser.save();
+//   await newUser.save();
 
-  res.status(200).json({
-    success: true,
-    message: `Welcome ${newUser.name}`,
-  })
-});
+//   res.status(200).json({
+//     success: true,
+//     message: `Welcome ${newUser.name}`,
+//   })
+// });
 
-// get user by id
-app.get('/getuser/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const user = await GoogleUser.findById(userId);
+// // get user by id
+// app.get('/getuser/:userId', async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     const user = await GoogleUser.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" })
-    }
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" })
+//     }
 
-    res.json({
-      success: true,
-      message: "User retrieved successfully",
-      user: user,
-    })
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" })
-  }
-});
+//     res.json({
+//       success: true,
+//       message: "User retrieved successfully",
+//       user: user,
+//     })
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal server error" })
+//   }
+// });
 
 // Start the server
 app.listen(port, () => {
