@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  githubId: String, // GitHub user ID
-  // email: String, // GitHub user email
-  username: String, // GitHub username
-  accessToken: String, // GitHub access token
-  avatarUrl: String, // GitHub avatar URL
+  githubId: String, 
+  email: String,
+  username: String, 
+  accessToken: String,
+  avatarUrl: String, 
   projects: [
     {
       type: mongoose.Schema.Types.ObjectId,

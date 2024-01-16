@@ -5,6 +5,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const mongoose = require('mongoose');
 const cors = require('cors');
 const axios = require('axios')
+const { exec } = require('child_process');
 
 const session = require('express-session');
 const User = require('./models/userModel');
@@ -457,6 +458,48 @@ app.delete('/deleteproject/:projectId', async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+//get user all project status
+
+app.get('/getprojectstatus', async (req, res) => {
+  const userId = "6593c7cb95a0c6626594f131";
+  const projects = await Project.find({ owner: userId });
+  const totalProjects = projects.length;
+  console.log(totalProjects)
+  res.send('Hello World');
+
+});
+
+
+
+//CHILD PROCESS FOR PYTHON SCRIPT
+app.post('/scan-code', (req, res) => {
+  const {code} = req.body;
+  // console.log(req.body)
+  
+  // Execute Python script as a child process
+  const pythonScript = 'dummy_vuln_model.py';  
+  const command = `python ${pythonScript} "${code}"`;
+
+  exec(command, (error, stdout, stderr) => {
+      if (error) {
+          console.error(`Error: ${error.message}`);
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      if (stderr) {
+          console.error(`Error: ${stderr}`);
+          return res.status(400).json({ error: 'Bad Request' });
+      }
+
+      const vulnerabilities = stdout.trim()
+      res.status(200).json({
+          success: true,
+          message: 'Code scanned successfully',
+          vulnerabilities: vulnerabilities,
+      });
+  });
+});
+
 
 
 

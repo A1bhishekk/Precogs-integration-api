@@ -21,9 +21,6 @@ const projectSchema = new mongoose.Schema(
         full_name: {
             type: String,
         },
-        githubLink: {
-            type: String,
-        },
         html_url: {
             type: String,
         },
@@ -35,10 +32,11 @@ const projectSchema = new mongoose.Schema(
         language: {
             type: String,
         },
-        // businessPriority: [projectInfoSchema],
-        // projectScope: [projectInfoSchema],
-        // environment:[projectInfoSchema],
-        // projectType: [projectInfoSchema],
+        issue_status:{
+            type: String,
+            enum: ["open", "fixed","ignored"],
+            default: "open",
+        },
         projectScope: {
             internal: {
                 type: Boolean,
@@ -57,7 +55,7 @@ const projectSchema = new mongoose.Schema(
             backend: {
                 type: Boolean,
                 default: false,
-                
+
             },
         },
         businessPriority: {
@@ -69,7 +67,7 @@ const projectSchema = new mongoose.Schema(
                 type: Boolean,
                 default: false,
             },
-            medium:{
+            medium: {
                 type: Boolean,
                 default: false,
             },
@@ -83,7 +81,7 @@ const projectSchema = new mongoose.Schema(
                 type: Boolean,
                 default: false,
             },
-            development:{
+            development: {
                 type: Boolean,
                 default: false,
             },
@@ -111,3 +109,9 @@ const Project = mongoose.model("Project", projectSchema);
 
 module.exports = Project;
 
+
+
+// businessPriority: [projectInfoSchema],
+// projectScope: [projectInfoSchema],
+// environment:[projectInfoSchema],
+// projectType: [projectInfoSchema],
