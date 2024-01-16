@@ -11,6 +11,7 @@ const session = require('express-session');
 const User = require('./models/userModel');
 const Project = require('./models/projectModel');
 const GoogleUser = require('./models/googleModel');
+const { count } = require('console');
 
 // Initialize Express
 const app = express();
@@ -463,10 +464,48 @@ app.delete('/deleteproject/:projectId', async (req, res) => {
 
 app.get('/getprojectstatus', async (req, res) => {
   const userId = "6593c7cb95a0c6626594f131";
-  const projects = await Project.find({ owner: userId });
-  const totalProjects = projects.length;
-  console.log(totalProjects)
-  res.send('Hello World');
+  // const projects = await Project.find({ owner: userId });
+  // const totalProjects = projects.length;
+  // console.log(totalProjects)
+  // res.send('Hello World');
+  try {
+    const statusCounts = await Project.aggregate([
+      {
+        $match: {
+          owner:new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $group: {
+          _id: '$issue_status',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const result = {
+      open: 0,
+      fixed: 0,
+      ignored: 0,
+    };
+    console.log(statusCounts)
+
+    statusCounts.forEach((statusCount) => {
+      result[statusCount._id] = statusCount.count;
+    });
+
+    
+
+    // return result;
+    res.json({
+      success: true,
+      message: "Project status fetched successfully",
+      statusCounts: result,
+      total_issues: result.open + result.fixed + result.ignored,
+    });
+  } catch (error) {
+    throw error;
+  }
 
 });
 
