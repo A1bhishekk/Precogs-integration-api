@@ -121,7 +121,7 @@ app.get('/dashboard', (req, res) => {
 app.get('/access/githubrepo', async (req, res) => {
   try {
     // const githubAccessToken = "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";
-    const githubAccessToken = "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";
+    const githubAccessToken = "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";
 
     // Function to fetch all pages of repositories recursively
     async function fetchRepositories(url, repositories = []) {
