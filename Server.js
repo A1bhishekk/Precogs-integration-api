@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const axios = require('axios')
 const { exec } = require('child_process');
+const path = require('path');
+const rateLimit = require('express-rate-limit');
 
 const session = require('express-session');
 const User = require('./models/userModel');
@@ -15,7 +17,10 @@ const { count } = require('console');
 
 // Initialize Express
 const app = express();
-const port = 4000;
+
+
+
+const port = 4500;
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
@@ -52,6 +57,7 @@ passport.use(
       callbackURL: 'http://localhost:4500/auth/github/callback',
     },
     (accessToken, refreshToken, profile, done) => {
+      console.log(accessToken)
       // Store user data in MongoDB
       User.findOneAndUpdate(
         { githubId: profile.id },
@@ -96,7 +102,12 @@ app.get(
   '/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/dashboard');
+    // res.redirect('/dashboard');
+    res.json({
+      success: true,
+      message: "User logged in successfully",
+      user: req.user,
+    });
   }
 );
 
@@ -109,8 +120,8 @@ app.get('/dashboard', (req, res) => {
 // github repo with access
 app.get('/access/githubrepo', async (req, res) => {
   try {
-    const githubAccessToken = "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";
-    // const githubAccessToken = "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";
+    // const githubAccessToken = "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";
+    const githubAccessToken = "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";
 
     // Function to fetch all pages of repositories recursively
     async function fetchRepositories(url, repositories = []) {
@@ -468,7 +479,7 @@ app.get('/get-dashboard-activity', async (req, res) => {
     const statusCounts = await Project.aggregate([
       {
         $match: {
-          owner:new mongoose.Types.ObjectId(userId),
+          owner: new mongoose.Types.ObjectId(userId),
         },
       },
       {
@@ -479,74 +490,113 @@ app.get('/get-dashboard-activity', async (req, res) => {
       },
     ]);
 
-    
+
     const result = {
       open: 0,
       fixed: 0,
       ignored: 0,
     };
-    
+
     statusCounts.forEach((statusCount) => {
       result[statusCount._id] = statusCount.count;
     });
-    
+
     const total_issues = result.open + result.fixed + result.ignored;
     const total_projects = await Project.countDocuments({ owner: userId });
     //TODO: change total_scans to actual number of scans
-    const total_scans=5;
-    
+    const total_scans = 5;
+
     //TODO: change LOC to actual number of lines of code
     const LineofCode = 4356;
     res.status(200).json({
       success: true,
       message: "Dashboard Activity fetched successfully",
-      dashboard_activity:[
-        {TotalIssues:total_issues},
-        {Projects:total_projects},
-        {TotalScans:total_scans},
-        {OpenIssues:result.open},
-        {FixedIssues:result.fixed},
-        {IgnoredIssues:result.ignored},
-        {LineOfCode:LineofCode},
+      dashboard_activity: [
+        { TotalIssues: total_issues },
+        { Projects: total_projects },
+        { TotalScans: total_scans },
+        { OpenIssues: result.open },
+        { FixedIssues: result.fixed },
+        { IgnoredIssues: result.ignored },
+        { LineOfCode: LineofCode },
       ]
     });
   } catch (error) {
     // console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
-
 });
+
 
 
 
 //CHILD PROCESS FOR PYTHON SCRIPT
 app.post('/scan-code', (req, res) => {
-  const {code} = req.body;
+  const { code } = req.body;
   // console.log(req.body)
-  
+
   // Execute Python script as a child process
-  const pythonScript = 'dummy_vuln_model.py';  
+  const pythonScript = 'dummy_vuln_model.py';
   const command = `python ${pythonScript} "${code}"`;
 
   exec(command, (error, stdout, stderr) => {
-      if (error) {
-          console.error(`Error: ${error.message}`);
-          return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      if (stderr) {
-          console.error(`Error: ${stderr}`);
-          return res.status(400).json({ error: 'Bad Request' });
-      }
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (stderr) {
+      console.error(`Error: ${stderr}`);
+      return res.status(400).json({ error: 'Bad Request' });
+    }
 
-      const vulnerabilities = stdout.trim()
-      res.status(200).json({
-          success: true,
-          message: 'Code scanned successfully',
-          vulnerabilities: vulnerabilities,
-      });
+    const vulnerabilities = stdout.trim()
+    res.status(200).json({
+      success: true,
+      message: 'Code scanned successfully',
+      vulnerabilities: vulnerabilities,
+    });
   });
 });
 
+
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Welcome to Precog',
+  });
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Create a rate limiter middleware with a limit of 100 requests per minute
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // 100 requests per minute
+  handler: (req, res) => {
+    // Redirect to the "/tomanyreq" route when the limit is exceeded
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  },
+});
+
+// Apply the rate limiter to all routes that start with /api
+app.use('/api', limiter);
+
+app.get('/api/v1', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Rate limit testing',
+  });
+});
+
+// Serve static files (including the HTML file) from the "public" directory
+// app.use(express.static(path.join(__dirname, 'public')));
+
+// Define your API routes here
+
+// // Define a route for handling too many requests
+// app.get('/rate-limit-exceeded', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
 
 
 
