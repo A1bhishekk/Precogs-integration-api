@@ -20,7 +20,7 @@ const app = express();
 
 
 
-const port = 4500;
+const port = 4000;
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
@@ -54,7 +54,7 @@ passport.use(
     {
       clientID: 'ca94a374c4d560c632e2',
       clientSecret: '34e2ccd44b932c58155d64c50f5e7a377179d9c8',
-      callbackURL: 'http://localhost:4500/auth/github/callback',
+      callbackURL: 'http://localhost:4000/auth/github/callback',
     },
     (accessToken, refreshToken, profile, done) => {
       console.log(accessToken)
@@ -121,7 +121,7 @@ app.get('/dashboard', (req, res) => {
 app.get('/access/githubrepo', async (req, res) => {
   try {
     // const githubAccessToken = "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";
-    const githubAccessToken = "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";
+    const githubAccessToken = "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";
 
     // Function to fetch all pages of repositories recursively
     async function fetchRepositories(url, repositories = []) {
