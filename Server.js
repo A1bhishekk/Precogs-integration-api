@@ -512,9 +512,9 @@ app.get('/get-dashboard-activity', async (req, res) => {
       success: true,
       message: "Dashboard Activity fetched successfully",
       dashboard_activity: [
-        { TotalIssues: total_issues },
+         { TotalScans: total_scans },
         { Projects: total_projects },
-        { TotalScans: total_scans },
+        { TotalIssues: total_issues },
         { OpenIssues: result.open },
         { FixedIssues: result.fixed },
         { IgnoredIssues: result.ignored },
