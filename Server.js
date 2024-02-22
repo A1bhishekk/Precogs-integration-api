@@ -502,7 +502,9 @@ app.get('/get-dashboard-activity', async (req, res) => {
     });
 
     const total_issues = result.open + result.fixed + result.ignored;
-    const total_projects = await Project.countDocuments({ owner: userId });
+    // const total_projects = await Project.countDocuments({ owner: userId });
+    const total_projects = await Project.find({ owner: userId });
+    const total_projects_count = total_projects.length;
     //TODO: change total_scans to actual number of scans
     const total_scans = 5;
 
@@ -513,7 +515,7 @@ app.get('/get-dashboard-activity', async (req, res) => {
       message: "Dashboard Activity fetched successfully",
       dashboard_activity: [
          { TotalScans: total_scans },
-        { Projects: total_projects },
+        { Projects: total_projects_count },
         { TotalIssues: total_issues },
         { OpenIssues: result.open },
         { FixedIssues: result.fixed },
